@@ -4,32 +4,174 @@
   <meta charset="UTF-8">
   <title>Login - TastyBites</title>
   <link rel="stylesheet" href="styles.css">
-<script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore-compat.js"></script>
-<script>
+  <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      font-family: 'Montserrat', Arial, sans-serif;
+      background-size: cover;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .login-card {
+      background: #fffbe6;
+      border-radius: 24px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.18), 0 0 0 4px #ffd180;
+      padding: 48px 38px 36px 38px;
+      max-width: 410px;
+      width: 100%;
+      margin: 40px 0;
+      text-align: center;
+      position: relative;
+      border: 2.5px solid #ffd180;
+      animation: popin 0.7s cubic-bezier(.23,1.02,.32,1) 1;
+    }
+    @keyframes popin {
+      0% { transform: scale(0.95); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    .login-card .food-emoji {
+      font-size: 3.2rem;
+      margin-bottom: 10px;
+      display: block;
+      animation: float 2s infinite ease-in-out;
+      filter: drop-shadow(0 2px 4px #ffd18088);
+    }
+    @keyframes float {
+      0%, 100% { transform: translateY(0);}
+      50% { transform: translateY(-8px);}
+    }
+    .login-card img.logo {
+      width: 82px;
+      margin-bottom: 14px;
+      border-radius: 50%;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.10);
+      border: 2.5px solid #ffd180;
+      background: #fffbe6;
+    }
+    .login-card h2 {
+      margin: 0 0 10px 0;
+      font-weight: 800;
+      color: #d35400;
+      letter-spacing: 1.5px;
+      font-size: 2.2rem;
+      font-family: 'Montserrat', Arial, sans-serif;
+      text-shadow: 0 2px 8px #ffd18044;
+    }
+    .login-card .divider {
+      width: 70px;
+      height: 4px;
+      background: linear-gradient(90deg, #ffd180 0%, #ffb74d 100%);
+      border-radius: 2px;
+      margin: 18px auto 20px auto;
+      box-shadow: 0 1px 6px #ffd18055;
+    }
+    .login-card .tagline {
+      color: #b85c00;
+      font-size: 1.13rem;
+      margin-bottom: 14px;
+      font-weight: 600;
+      letter-spacing: 0.3px;
+    }
+    .login-card .welcome {
+      color: #7a6a4f;
+      font-size: 1.01rem;
+      margin-bottom: 24px;
+      font-weight: 400;
+      line-height: 1.5;
+    }
+    #google-login-btn {
+      width: 100%;
+      background: linear-gradient(90deg, #ff9800 60%, #ffd180 100%);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 14px 0;
+      font-size: 1.15rem;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s, box-shadow 0.2s;
+      box-shadow: 0 2px 12px rgba(255,168,0,0.10);
+      gap: 12px;
+      letter-spacing: 0.5px;
+    }
+    #google-login-btn:hover {
+      background: linear-gradient(90deg, #e65100 60%, #ffd180 100%);
+      box-shadow: 0 4px 18px rgba(255,168,0,0.13);
+    }
+    #google-login-btn img {
+      height: 26px;
+      margin-right: 8px;
+      vertical-align: middle;
+    }
+    #login-error {
+      color: #e74c3c;
+      margin-top: 18px;
+      font-size: 1.01rem;
+      min-height: 22px;
+    }
+    .login-footer {
+      margin-top: 34px;
+      color: #fffbe6;
+      font-size: 1.03rem;
+      text-align: center;
+      opacity: 0.92;
+      letter-spacing: 0.2px;
+      text-shadow: 0 1px 2px #00000022;
+    }
+    @media (max-width: 500px) {
+      .login-card {
+        padding: 24px 8px 18px 8px;
+        max-width: 97vw;
+      }
+      .login-card h2 {
+        font-size: 1.5rem;
+      }
+      .login-card img.logo {
+        width: 54px;
+      }
+    }
+  </style>
+  <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore-compat.js"></script>
+  <script>
     const firebaseConfig = {
-        apiKey: "AIzaSyCY4qhi8Vutg_0pFC7msLfKMRZiNELn2hE",
-  authDomain: "foodapp-8ffc6.firebaseapp.com",
-  projectId: "foodapp-8ffc6",
-  storageBucket: "foodapp-8ffc6.firebasestorage.app",
-  messagingSenderId: "314611367873",
-  appId: "1:314611367873:web:10582db204db9a1e67b940",
-  measurementId: "G-EDXCJLRJXC"
+      apiKey: "AIzaSyCY4qhi8Vutg_0pFC7msLfKMRZiNELn2hE",
+      authDomain: "foodapp-8ffc6.firebaseapp.com",
+      projectId: "foodapp-8ffc6",
+      storageBucket: "foodapp-8ffc6.firebasestorage.app",
+      messagingSenderId: "314611367873",
+      appId: "1:314611367873:web:10582db204db9a1e67b940",
+      measurementId: "G-EDXCJLRJXC"
     };
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
   </script>
 </head>
 <body>
-  <div class="container" style="max-width:400px;margin-top:80px;">
-    <h2 style="text-align:center;">TastyBites Login</h2>
-    <button id="google-login-btn" class="checkout-btn" style="width:100%;background:#4285F4;margin-top:30px;">
-      <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" style="height:20px;vertical-align:middle;margin-right:8px;">
+  <div class="login-card">
+    <span class="food-emoji">🍛</span>
+    <h1>TastyBites</h1>
+    <div class="divider"></div>
+    <div class="tagline">Premium Odia Cuisine, Delivered to You</div>
+    <div class="welcome">
+      Welcome to <b>TastyBites</b>! Sign in to explore our chef-crafted menu and enjoy authentic flavors of Odisha at your doorstep.<br>
+    </div>
+    <button id="google-login-btn">
+      <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google">
       Sign in with Google
     </button>
-    <p id="login-error" style="color:red;text-align:center;"></p>
+    <div id="login-error"></div>
   </div>
+  
   <script>
     document.getElementById('google-login-btn').onclick = async () => {
       const provider = new firebase.auth.GoogleAuthProvider();
