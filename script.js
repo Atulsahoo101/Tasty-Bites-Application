@@ -1,7 +1,12 @@
 // Cart state (load from localStorage or initialize empty)
 let cart = JSON.parse(localStorage.getItem('cart')) || [];
 let menuItems = [];
-
+if (!window.chatState) {
+  window.chatState = {
+    paymentMethod: 'upi',
+    messageHistory: []
+  };
+}
 // Fetch menu items from Firestore
 async function fetchMenuItems() {
   try {
@@ -79,7 +84,8 @@ function filterByCategory(category) {
   buttons.forEach(btn => {
     if (btn.textContent === category) btn.classList.add('active');
   });
-  const filteredItems = category === 'All' ? menuItems : menuItems.filter(item => item.category === category);
+  // Use window.menuItems instead of menuItems
+  const filteredItems = category === 'All' ? window.menuItems : window.menuItems.filter(item => item.category === category);
   displayAllItems(filteredItems);
 }
 
