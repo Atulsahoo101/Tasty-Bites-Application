@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Past Orders - TastyBites</title>
+  <link rel="stylesheet" href="styles.css">
+  
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore-compat.js"></script>
+  
+  <script>
+    // Firebase config
+     const firebaseConfig = {
+        apiKey: "AIzaSyCY4qhi8Vutg_0pFC7msLfKMRZiNELn2hE",
+  authDomain: "foodapp-8ffc6.firebaseapp.com",
+  projectId: "foodapp-8ffc6",
+  storageBucket: "foodapp-8ffc6.firebasestorage.app",
+  messagingSenderId: "314611367873",
+  appId: "1:314611367873:web:10582db204db9a1e67b940",
+  measurementId: "G-EDXCJLRJXC"
+    };
+
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+  </script>
+
+  <style>
+    .food-card {
+      border: 1px solid #e0e0e0;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+      padding: 24px 20px 16px 20px;
+      margin-bottom: 28px;
+      background: #fff;
+      transition: box-shadow 0.2s;
+    }
+    .food-card:hover {
+      box-shadow: 0 4px 16px rgba(0,0,0,0.13);
+    }
+    .food-card h3 {
+      margin-top: 0;
+      color: #4285F4;
+      font-size: 1.2em;
+      margin-bottom: 10px;
+    }
+    .food-card ul {
+      padding-left: 18px;
+      margin-bottom: 10px;
+    }
+    .food-card li {
+      margin-bottom: 4px;
+      font-size: 1em;
+    }
+    .food-card .price {
+      font-weight: bold;
+      color: #388e3c;
+      margin-bottom: 6px;
+    }
+    .food-card strong {
+      color: #333;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container">
+      <h1>TastyBites Restaurant</h1>
+      <nav>
+        <a href="index.html" class="active">Home</a>
+        <a href="orders.html" class="active">Past Orders</a>
+        <a href="cart.html">Cart (<span id="cart-count">0</span>)</a>
+        <a href="login.html" id="logout-btn">Logout</a>
+      </nav>
+    </div>
+  </header>
+
+  <section class="all-items">
+    <div class="container">
+      <h2>Your Past Orders</h2>
+      <div id="orders-list"></div>
+    </div>
+  </section>
+
+  <script>
+    // Check auth state
+    auth.onAuthStateChanged(user => {
+      const ordersList = document.getElementById('orders-list');
+
+      if (!user) {
+        ordersList.innerHTML = '<p>Please login to view your orders.</p>';
+        return;
+      }
+
+      db.collection('orders')
+        .where('userId', '==', user.uid)
+        .get()
+        .then(snapshot => {
+          if (snapshot.empty) {
+            ordersList.innerHTML = '<p>No past orders found.</p>';
+            return;
+          }
+
+          let html = '';
+          snapshot.forEach(doc => {
+            const order = doc.data();
+            html += `
+              <div class="food-card">
+                <h3>Order on ${order.timestamp?.toDate().toLocaleString() || 'Unknown date'}</h3>
+                <ul>
+                  ${order.items.map(i => `<li><strong>${i.name}</strong> &times; ${i.quantity} <span style="float:right;">₹${i.price * i.quantity}</span></li>`).join('')}
+                </ul>
+                <p class="price">Total: ₹${order.total}</p>
+                <p><strong>Delivered to:</strong> ${order.address}</p>
+              </div>
+            `;
+          });
+          ordersList.innerHTML = html;
+        })
+        .catch(error => {
+          console.error("Error fetching orders:", error);
+          ordersList.innerHTML = '<p>Error loading orders. Please try again later.</p>';
+        });
+    });
+  </script>
+</body>
+</html>

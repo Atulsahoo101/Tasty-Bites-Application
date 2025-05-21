@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TastyBites - Cart</title>
+  <link rel="stylesheet" href="styles.css">
+ <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore-compat.js"></script>
+<script>
+    const firebaseConfig = {
+        apiKey: "AIzaSyCY4qhi8Vutg_0pFC7msLfKMRZiNELn2hE",
+  authDomain: "foodapp-8ffc6.firebaseapp.com",
+  projectId: "foodapp-8ffc6",
+  storageBucket: "foodapp-8ffc6.firebasestorage.app",
+  messagingSenderId: "314611367873",
+  appId: "1:314611367873:web:10582db204db9a1e67b940",
+  measurementId: "G-EDXCJLRJXC"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+  </script>
+</head>
+<body>
+  <!-- Header -->
+  <header>
+    <div class="container">
+      <h1>TastyBites Restaurant</h1>
+      <nav>
+        <a href="index.html">Home</a>
+                  <a href="orders.html" class="active">Past Orders</a>
+
+        <a href="cart.html" class="active">Cart (<span id="cart-count">0</span>)</a>
+                <a href="login.html" id="logout-btn">Logout</a>
+
+      </nav>
+    </div>
+  </header>
+
+  <!-- Cart Section -->
+  <section class="cart">
+    <div class="container">
+      <h2>Your Cart</h2>
+      <div id="cart-items"></div>
+      <div id="cart-empty" class="cart-empty">Your cart is empty.</div>
+      <div id="cart-total" class="cart-total"></div>
+      <button id="checkout-btn" class="checkout-btn" style="display: none;">Proceed to Checkout</button>
+    </div>
+  </section>
+
+  <!-- Checkout Form -->
+  <section id="checkout-form" class="checkout-form" style="display: none;">
+    <div class="container">
+      <h2>Checkout</h2>
+      <div class="form-group">
+        <label for="name">Name:</label>
+        <input type="text" id="name" required>
+      </div>
+      <div class="form-group">
+        <label for="address">Delivery Address:</label>
+        <textarea id="address" required></textarea>
+      </div>
+      <div class="form-group">
+        <label for="phone">Phone Number:</label>
+        <input type="tel" id="phone" required>
+      </div>
+      <button id="submit-order" >Place Order</button>
+      <button id="cancel-checkout">Cancel</button>
+    </div>
+  </section>
+
+  <!-- Order Confirmation -->
+  <section id="order-confirmation" class="order-confirmation" style="display: none;">
+    <div class="container">
+      <h2>Order Confirmed!</h2>
+      <p id="confirmation-message"></p>
+      <button onclick="window.location.href='index.html'">Back to Home</button>
+    </div>
+  </section>
+
+  <!-- Payment Modal/Section -->
+<!-- Payment Modal/Section -->
+<section id="payment-section" class="payment-section" style="display: none;">
+  <div class="container">
+    <h2>Complete Your Payment</h2>
+    <div id="payment-summary" class="bill-receipt"></div>
+    <div class="payment-method-selection">
+      <h3>Select Payment Method</h3>
+      <label class="payment-radio">
+        <input type="radio" name="payment-method" value="upi" checked>
+        <span>UPI QR Code</span>
+      </label>
+      <label class="payment-radio">
+        <input type="radio" name="payment-method" value="card">
+        <span>Card</span>
+      </label>
+    </div>
+    <div class="payment-methods">
+      <div class="payment-qr">
+        <h3>Scan & Pay</h3>
+        <img id="qr-code" src="" alt="QR Code" style="margin-bottom: 10px;">
+        <p><strong>UPI ID:</strong> tastybites@bank</p>
+      </div>
+      <div class="payment-card" style="display: none;">
+        <h3>Pay with Card</h3>
+        <input type="text" id="card-number" placeholder="Card Number" maxlength="16">
+        <div class="card-input-row">
+          <input type="text" id="card-expiry" placeholder="MM/YY" maxlength="5">
+          <input type="text" id="card-cvv" placeholder="CVV" maxlength="3">
+        </div>
+        <div id="card-error" class="error-message"></div>
+      </div>
+    </div>
+    <button id="payment-success-btn" class="checkout-btn">Payment Successful</button>
+    <button id="cancel-payment-btn">Cancel</button>
+  </div>
+</section>
+
+<style>
+.payment-section {
+  background: #f9f9f9;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+  padding: 32px 0;
+  margin-top: 32px;
+}
+.payment-methods {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-top: 24px;
+  gap: 32px;
+}
+.payment-qr, .payment-card {
+  flex: 1;
+  background: #fff;
+  border-radius: 8px;
+  padding: 18px 16px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+  text-align: center;
+}
+.payment-divider {
+  align-self: center;
+  font-weight: bold;
+  color: #888;
+}
+.payment-card input {
+  padding: 8px;
+  margin-bottom: 6px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+</style>
+
+  <script src="script.js"></script>
+  <script>
+    // Redirect to login if not authenticated
+    document.addEventListener('DOMContentLoaded', function() {
+      firebase.auth().onAuthStateChanged(function(user) {
+        if (!user) window.location.href = "login.html";
+      });
+    });
+  </script>
+</body>
+</html>

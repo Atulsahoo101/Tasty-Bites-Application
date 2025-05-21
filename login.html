@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Login - TastyBites</title>
+  <link rel="stylesheet" href="styles.css">
+<script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore-compat.js"></script>
+<script>
+    const firebaseConfig = {
+        apiKey: "AIzaSyCY4qhi8Vutg_0pFC7msLfKMRZiNELn2hE",
+  authDomain: "foodapp-8ffc6.firebaseapp.com",
+  projectId: "foodapp-8ffc6",
+  storageBucket: "foodapp-8ffc6.firebasestorage.app",
+  messagingSenderId: "314611367873",
+  appId: "1:314611367873:web:10582db204db9a1e67b940",
+  measurementId: "G-EDXCJLRJXC"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+  </script>
+</head>
+<body>
+  <div class="container" style="max-width:400px;margin-top:80px;">
+    <h2 style="text-align:center;">TastyBites Login</h2>
+    <button id="google-login-btn" class="checkout-btn" style="width:100%;background:#4285F4;margin-top:30px;">
+      <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" style="height:20px;vertical-align:middle;margin-right:8px;">
+      Sign in with Google
+    </button>
+    <p id="login-error" style="color:red;text-align:center;"></p>
+  </div>
+  <script>
+    document.getElementById('google-login-btn').onclick = async () => {
+      const provider = new firebase.auth.GoogleAuthProvider();
+      try {
+        await auth.signInWithPopup(provider);
+        window.location.href = "index.html";
+      } catch (e) {
+        document.getElementById('login-error').textContent = e.message;
+      }
+    };
+    // Redirect to index if already logged in
+    auth.onAuthStateChanged(user => {
+      if (user) window.location.href = "index.html";
+    });
+    firebase.auth().signOut(); // Force sign out on login page load
+  </script>
+</body>
+</html>
