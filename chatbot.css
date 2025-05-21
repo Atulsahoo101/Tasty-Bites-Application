@@ -168,7 +168,6 @@
 }
 
 .chatbot-message.bot {
-  background-color: #e2e8f0;
   align-self: flex-start;
   border-bottom-left-radius: 2px;
 }
@@ -178,6 +177,25 @@
   color: white;
   align-self: flex-end;
   border-bottom-right-radius: 2px;
+}
+
+/* New Styles for Message Row and Avatar */
+.chatbot-message-row {
+  display: flex;
+  align-items: flex-end;
+}
+
+.waiter-avatar {
+  width: 32px;
+  margin-right: 8px;
+}
+
+.chatbot-bubble {
+  background: #f1f1f1;
+  border-radius: 16px;
+  padding: 8px 14px;
+  display: inline-block;
+  max-width: 80%;
 }
 
 /* Chatbot Options */
@@ -306,6 +324,7 @@
   border-radius: 8px;
   background: #f8fafc;
 }
+
 
 /* Responsive Design */
 @media (max-width: 767px) {
