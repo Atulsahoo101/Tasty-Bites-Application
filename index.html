@@ -1,86 +1,69 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>TastyBites - Home</title>
-  <link rel="stylesheet" href="styles.css">
-  <link rel="stylesheet" href="chatbot.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-  <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore-compat.js"></script>
- 
- <script>
-    const firebaseConfig = {
-      apiKey: "AIzaSyCY4qhi8Vutg_0pFC7msLfKMRZiNELn2hE",
-      authDomain: "foodapp-8ffc6.firebaseapp.com",
-      projectId: "foodapp-8ffc6",
-      storageBucket: "foodapp-8ffc6.firebasestorage.app",
-      messagingSenderId: "314611367873",
-      appId: "1:314611367873:web:10582db204db9a1e67b940",
-      measurementId: "G-EDXCJLRJXC"
-    };
-    firebase.initializeApp(firebaseConfig);
-    const auth = firebase.auth();
-  </script>
-</head>
-<body>
-  <!-- Header -->
-  <header>
-    <div class="container">
-      <h1>TastyBites Restaurant</h1>
-      <nav>
-        <a href="index.html" class="active">Home</a>
-        <a href="orders.html">Past Orders</a>
-        <a href="cart.html">Cart (<span id="cart-count">0</span>)</a>
-        <a href="#" id="logout-btn">Logout</a>
-      </nav>
-    </div>
-  </header>
+  <head>
+    <meta charset="utf-8" />
+    <title>Rasoi</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <meta content="" name="keywords" />
+    <meta content="" name="description" />
+    <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore-compat.js"></script>
+    <script>
+      const firebaseConfig = {
+        apiKey: "AIzaSyCY4qhi8Vutg_0pFC7msLfKMRZiNELn2hE",
+        authDomain: "foodapp-8ffc6.firebaseapp.com",
+        projectId: "foodapp-8ffc6",
+        storageBucket: "foodapp-8ffc6.firebasestorage.app",
+        messagingSenderId: "314611367873",
+        appId: "1:314611367873:web:10582db204db9a1e67b940",
+        measurementId: "G-EDXCJLRJXC",
+      };
+      firebase.initializeApp(firebaseConfig);
+      const auth = firebase.auth();
+      const db = firebase.firestore();
+    </script>
+    <!-- Favicon -->
+    <link href="img/favicon.ico" rel="icon" />
 
-  <!-- Recommendations Section -->
-  <section class="recommendations">
-    <div class="container">
-      <h2>Our Recommendations</h2>
-      <div id="recommendations" class="grid"></div>
-    </div>
-  </section>
+    <!-- Google Web Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600&family=Nunito:wght@600;700;800&family=Pacifico&display=swap"
+      rel="stylesheet"
+    />
 
-  <!-- Category Filter Section -->
-  <section class="categories">
-    <div class="container">
-      <h2>Categories</h2>
-      <div id="category-filter" class="category-filter"></div>
-    </div>
-  </section>
+    <!-- Icon Font Stylesheet -->
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css"
+      rel="stylesheet"
+    />
 
-  <!-- All Food Items Section -->
-  <section class="all-items">
-    <div class="container">
-      <h2>All Menu Items</h2>
-      <div id="all-items" class="grid"></div>
-    </div>
-  </section>
+    <!-- Libraries Stylesheet -->
+    <link href="lib/animate/animate.min.css" rel="stylesheet" />
+    <link href="lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet" />
+    <link
+      href="lib/tempusdominus/css/tempusdominus-bootstrap-4.min.css"
+      rel="stylesheet"
+    />
 
-  <!-- Chat Button -->
-<button id="chat-btn" class="chat-btn-img">
-  <img src="Adobe Express - file.png" alt="Chat with Us" />
-  <span class="chat-btn-text">Chat with Us</span>
-</button>
-  <!-- Chatbot Modal -->
-  <div id="chatbot" class="chatbot">
-    <div class="chatbot-header">
-      <h3>TastyBites Waiter</h3>
-      <button id="chatbot-close">×</button>
-    </div>
-    <div id="chatbot-messages" class="chatbot-messages"></div>
-    <div id="chatbot-options" class="chatbot-options"></div>
-  </div>
+    <!-- Customized Bootstrap Stylesheet -->
+    <link href="css/bootstrap.min.css" rel="stylesheet" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
+    />
 
-  <script src="script.js"></script>
-  <script src="chatbot.js"></script>
-  <script>
+    <!-- Template Stylesheet -->
+    <link href="css/style.css" rel="stylesheet" />
+    <link href="css/chatbot.css" rel="stylesheet" />
+
+    <script>
     document.getElementById('logout-btn').addEventListener('click', function(e) {
       e.preventDefault();
       firebase.auth().signOut().then(function() {
@@ -88,7 +71,7 @@
       });
     });
   </script>
-  <script>
+    <script>
     // Redirect to login if not authenticated
     document.addEventListener('DOMContentLoaded', function() {
       firebase.auth().onAuthStateChanged(function(user) {
@@ -96,5 +79,386 @@
       });
     });
   </script>
-</body>
+  </head>
+
+  <body>
+    <div class="container-xxl bg-white p-0">
+      <!-- Spinner Start -->
+      <div
+        id="spinner"
+        class="show bg-white position-fixed translate-middle w-100 vh-100 top-50 start-50 d-flex align-items-center justify-content-center"
+      >
+        <div
+          class="spinner-border text-primary"
+          style="width: 3rem; height: 3rem"
+          role="status"
+        >
+          <span class="sr-only">Loading...</span>
+        </div>
+      </div>
+      <!-- Spinner End -->
+
+      <!-- Navbar & Hero Start -->
+      <div class="container-xxl position-relative p-0">
+        <nav
+          class="navbar navbar-expand-lg navbar-dark bg-dark px-4 px-lg-5 py-3 py-lg-0"
+        >
+          <a href="" class="navbar-brand p-0">
+            <h1 class="text-primary m-0">
+              <i class="fa fa-utensils me-3"></i>Rasoi
+            </h1>
+            <!-- <img src="img/logo.png" alt="Logo"> -->
+          </a>
+          <button
+            class="navbar-toggler"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#navbarCollapse"
+          >
+            <span class="fa fa-bars"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <div class="navbar-nav ms-auto py-0 pe-4">
+              <a href="index.html" class="nav-item nav-link active">Home</a>
+              <a href="orders.html" class="nav-item nav-link">Past Orders</a>
+
+              <a href="cart.html" class="nav-item nav-link"
+                >Cart (<span id="cart-count">0</span>)</a
+              >
+            </div>
+            <a href="" class="btn btn-primary" id="logout-btn">Logout</a>
+          </div>
+        </nav>
+
+        <div class="container-xxl py-5 bg-dark hero-header mb-5">
+  <div class="container my-5 py-5">
+    <div class="row align-items-center g-5">
+      <div class="col-lg-6 text-center text-lg-start">
+        <h1 class="display-3 text-white animated slideInLeft">
+          Experience the Taste of<br />Authentic Odia Cuisine
+        </h1>
+        <p class="text-white animated slideInLeft mb-4 pb-2">
+          Discover the rich flavors of Odisha with our traditional dishes like Dalma, Pakhala Bhata, and Chhena Poda. Each plate is a celebration of our heritage, crafted with age-old recipes and fresh, local ingredients. Come savor the soulful taste of Odisha!
+        </p>
+      </div>
+      <div class="col-lg-6 text-center text-lg-end overflow-hidden">
+        <img class="img-fluid" src="img/hero.png" alt="Authentic Odia Food" />
+      </div>
+    </div>
+  </div>
+</div>
+
+      </div>
+      <!-- Navbar & Hero End -->
+
+      <!-- Service Start -->
+      <!-- <div class="container-xxl py-5">
+        <div class="container">
+          <div class="row g-4">
+            <div class="col-lg-3 col-sm-6 wow fadeInUp" data-wow-delay="0.1s">
+              <div class="service-item rounded pt-3">
+                <div class="p-4">
+                  <i class="fa fa-3x fa-user-tie text-primary mb-4"></i>
+                  <h5>Master Chefs</h5>
+                  <p>
+                    Diam elitr kasd sed at elitr sed ipsum justo dolor sed clita
+                    amet diam
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-3 col-sm-6 wow fadeInUp" data-wow-delay="0.3s">
+              <div class="service-item rounded pt-3">
+                <div class="p-4">
+                  <i class="fa fa-3x fa-utensils text-primary mb-4"></i>
+                  <h5>Quality Food</h5>
+                  <p>
+                    Diam elitr kasd sed at elitr sed ipsum justo dolor sed clita
+                    amet diam
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-3 col-sm-6 wow fadeInUp" data-wow-delay="0.5s">
+              <div class="service-item rounded pt-3">
+                <div class="p-4">
+                  <i class="fa fa-3x fa-cart-plus text-primary mb-4"></i>
+                  <h5>Online Order</h5>
+                  <p>
+                    Diam elitr kasd sed at elitr sed ipsum justo dolor sed clita
+                    amet diam
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-3 col-sm-6 wow fadeInUp" data-wow-delay="0.7s">
+              <div class="service-item rounded pt-3">
+                <div class="p-4">
+                  <i class="fa fa-3x fa-headset text-primary mb-4"></i>
+                  <h5>24/7 Service</h5>
+                  <p>
+                    Diam elitr kasd sed at elitr sed ipsum justo dolor sed clita
+                    amet diam
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div> -->
+      <!-- Service End -->
+
+      <!-- About Start -->
+      <div class="container-xxl py-5">
+        <div class="container">
+          <div class="row g-5 align-items-center">
+            <div class="col-lg-6">
+              <div class="row g-3">
+                <div class="col-6 text-start">
+                  <img
+                    class="img-fluid rounded w-100 wow zoomIn"
+                    data-wow-delay="0.1s"
+                    src="img/about-1.jpg"
+                  />
+                </div>
+                <div class="col-6 text-start">
+                  <img
+                    class="img-fluid rounded w-75 wow zoomIn"
+                    data-wow-delay="0.3s"
+                    src="img/about-2.jpg"
+                    style="margin-top: 25%"
+                  />
+                </div>
+                <div class="col-6 text-end">
+                  <img
+                    class="img-fluid rounded w-75 wow zoomIn"
+                    data-wow-delay="0.5s"
+                    src="img/about-3.jpg"
+                  />
+                </div>
+                <div class="col-6 text-end">
+                  <img
+                    class="img-fluid rounded w-100 wow zoomIn"
+                    data-wow-delay="0.7s"
+                    src="img/about-4.jpg"
+                  />
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-6">
+              <h5
+                class="section-title ff-secondary text-start text-primary fw-normal"
+              >
+                About Us
+              </h5>
+              <h1 class="mb-4">
+                Welcome to
+                <i class="fa fa-utensils text-primary me-2"></i>Odia Restaurant
+              </h1>
+              <p class="mb-4">
+                Our restaurant is a celebration of Odisha’s rich culture and
+                authentic flavors. From Pakhala Bhata to Chhena Poda, each dish
+                brings the traditional taste of Odia kitchens to your table.
+              </p>
+              <p class="mb-4">
+                With over 15 years of culinary excellence, we take pride in
+                promoting Odia cuisine across India. Every dish is prepared with
+                fresh ingredients, age-old recipes, and a touch of home-cooked
+                love.
+              </p>
+              <div class="row g-4 mb-4">
+                <div class="col-sm-6">
+                  <div
+                    class="d-flex align-items-center border-start border-5 border-primary px-3"
+                  >
+                    <h1
+                      class="flex-shrink-0 display-5 text-primary mb-0"
+                      data-toggle="counter-up"
+                    >
+                      15
+                    </h1>
+                    <div class="ps-4">
+                      <p class="mb-0">Years of</p>
+                      <h6 class="text-uppercase mb-0">Experience</h6>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-sm-6">
+                  <div
+                    class="d-flex align-items-center border-start border-5 border-primary px-3"
+                  >
+                    <h1
+                      class="flex-shrink-0 display-5 text-primary mb-0"
+                      data-toggle="counter-up"
+                    >
+                      25
+                    </h1>
+                    <div class="ps-4">
+                      <p class="mb-0">Skilled</p>
+                      <h6 class="text-uppercase mb-0">Odia Chefs</h6>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- About End -->
+
+      <!-- Menu Start -->
+
+      <!-- Menu Start -->
+      <div class="container-xxl py-5" style="display: none">
+        <div class="container">
+          <div class="text-center wow fadeInUp" data-wow-delay="0.1s">
+            <h5
+              class="section-title ff-secondary text-center text-primary fw-normal"
+            >
+              Food Menu
+            </h5>
+            <h1 class="mb-5">Most Popular Items</h1>
+          </div>
+          <div id="recommendations" class="grid"></div>
+        </div>
+      </div>
+
+      <button id="chat-btn" class="chat-btn-img">
+        <img src="Adobe Express - file.png" alt="Chat with Us" />
+        <span class="chat-btn-text">Chat & Order Easily !!!</span>
+      </button>
+      <!-- Chatbot Modal -->
+      <div id="chatbot" class="chatbot">
+        <div class="chatbot-header">
+          <h3 class="">Rasoi Waiter</h3>
+          <button id="chatbot-close">×</button>
+        </div>
+        <div id="chatbot-messages" class="chatbot-messages"></div>
+        <div id="chatbot-options" class="chatbot-options"></div>
+      </div>
+
+      <div class="container-xxl py-5">
+        <div class="container">
+          <div class="text-center wow fadeInUp" data-wow-delay="0.1s">
+            <h5
+              class="section-title ff-secondary text-center text-primary fw-normal"
+            >
+              Food Menu
+            </h5>
+            <h1 class="mb-5">Most Popular Items</h1>
+            <div id="category-filter" class="category-filter"></div>
+
+            <div id="all-items" class="grid"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Menu End -->
+
+      <!-- Footer Start -->
+      <div
+        class="container-fluid bg-dark text-light footer pt-5 mt-5 wow fadeIn"
+        data-wow-delay="0.1s"
+      >
+        <div class="container py-5">
+          <div class="row g-5">
+            <div class="col-lg-3 col-md-6">
+              <h4
+                class="section-title ff-secondary text-start text-primary fw-normal mb-4"
+              >
+                Odia Restaurant
+              </h4>
+              <a class="btn btn-link" href="">About Us</a>
+              <a class="btn btn-link" href="">Contact</a>
+              <a class="btn btn-link" href="">Menu</a>
+            </div>
+            <div class="col-lg-3 col-md-6">
+              <h4
+                class="section-title ff-secondary text-start text-primary fw-normal mb-4"
+              >
+                Contact
+              </h4>
+              <p class="mb-2">
+                <i class="fa fa-map-marker-alt me-3"></i>Bhubaneswar, Odisha,
+                India
+              </p>
+              <p class="mb-2">
+                <i class="fa fa-phone-alt me-3"></i>+91 98765 43210
+              </p>
+              <p class="mb-2">
+                <i class="fa fa-envelope me-3"></i>info@odirestaurant.com
+              </p>
+            </div>
+            <div class="col-lg-3 col-md-6">
+              <h4
+                class="section-title ff-secondary text-start text-primary fw-normal mb-4"
+              >
+                Hours
+              </h4>
+              <h5 class="text-light fw-normal">Mon - Sat</h5>
+              <p>10AM - 9PM</p>
+              <h5 class="text-light fw-normal">Sunday</h5>
+              <p>10AM - 8PM</p>
+            </div>
+            <div class="col-lg-3 col-md-6">
+              <h4
+                class="section-title ff-secondary text-start text-primary fw-normal mb-4"
+              >
+                Stay Connected
+              </h4>
+              <p>Follow us on social media for updates and offers.</p>
+              <div class="d-flex pt-2">
+                <a class="btn btn-outline-light btn-social" href=""
+                  ><i class="fab fa-facebook-f"></i
+                ></a>
+                <a class="btn btn-outline-light btn-social" href=""
+                  ><i class="fab fa-instagram"></i
+                ></a>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="container">
+          <div class="copyright">
+            <div class="row">
+              <div class="col-md-6 text-center text-md-start mb-3 mb-md-0">
+                &copy; <a class="border-bottom" href="#">Odia Restaurant</a>,
+                All Rights Reserved.
+              </div>
+              <div class="col-md-6 text-center text-md-end">
+                <div class="footer-menu">
+                  <a href="">Home</a>
+                  <a href="">Help</a>
+                  <a href="">FAQs</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Footer End -->
+
+      <!-- Back to Top -->
+      <a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top"
+        ><i class="bi bi-arrow-up"></i
+      ></a>
+    </div>
+
+    <!-- JavaScript Libraries -->
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="lib/wow/wow.min.js"></script>
+    <script src="lib/easing/easing.min.js"></script>
+    <script src="lib/waypoints/waypoints.min.js"></script>
+    <script src="lib/counterup/counterup.min.js"></script>
+    <script src="lib/owlcarousel/owl.carousel.min.js"></script>
+    <script src="lib/tempusdominus/js/moment.min.js"></script>
+    <script src="lib/tempusdominus/js/moment-timezone.min.js"></script>
+    <script src="lib/tempusdominus/js/tempusdominus-bootstrap-4.min.js"></script>
+
+    <!-- Template Javascript -->
+    <script src="js/script.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/chatbot.js"></script>
+  </body>
 </html>

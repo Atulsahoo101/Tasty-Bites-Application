@@ -1,44 +1,142 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>TastyBites - Cart</title>
-  <link rel="stylesheet" href="styles.css">
- <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore-compat.js"></script>
-<script>
-    const firebaseConfig = {
+    <meta charset="utf-8" />
+    <title>Rasoi - Bootstrap Restaurant Template</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <meta content="" name="keywords" />
+    <meta content="" name="description" />
+    <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore-compat.js"></script>
+    <script>
+      const firebaseConfig = {
         apiKey: "AIzaSyCY4qhi8Vutg_0pFC7msLfKMRZiNELn2hE",
-  authDomain: "foodapp-8ffc6.firebaseapp.com",
-  projectId: "foodapp-8ffc6",
-  storageBucket: "foodapp-8ffc6.firebasestorage.app",
-  messagingSenderId: "314611367873",
-  appId: "1:314611367873:web:10582db204db9a1e67b940",
-  measurementId: "G-EDXCJLRJXC"
-    };
-    firebase.initializeApp(firebaseConfig);
-    const auth = firebase.auth();
+        authDomain: "foodapp-8ffc6.firebaseapp.com",
+        projectId: "foodapp-8ffc6",
+        storageBucket: "foodapp-8ffc6.firebasestorage.app",
+        messagingSenderId: "314611367873",
+        appId: "1:314611367873:web:10582db204db9a1e67b940",
+        measurementId: "G-EDXCJLRJXC",
+      };
+      firebase.initializeApp(firebaseConfig);
+      const auth = firebase.auth();
+      const db = firebase.firestore();
+    </script>
+    <!-- Favicon -->
+    <link href="img/favicon.ico" rel="icon" />
+
+    <!-- Google Web Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600&family=Nunito:wght@600;700;800&family=Pacifico&display=swap"
+      rel="stylesheet"
+    />
+<link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+/>
+
+    <!-- Icon Font Stylesheet -->
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css"
+      rel="stylesheet"
+    />
+
+    <!-- Libraries Stylesheet -->
+    <link href="lib/animate/animate.min.css" rel="stylesheet" />
+    <link href="lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet" />
+    <link
+      href="lib/tempusdominus/css/tempusdominus-bootstrap-4.min.css"
+      rel="stylesheet"
+    />
+
+    <!-- Customized Bootstrap Stylesheet -->
+    <link href="css/bootstrap.min.css" rel="stylesheet" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
+    />
+
+    <!-- Template Stylesheet -->
+    <link href="css/style.css" rel="stylesheet" />
+    <link href="css/chatbot.css" rel="stylesheet" />
+
+    <script>
+    document.getElementById('logout-btn').addEventListener('click', function(e) {
+      e.preventDefault();
+      firebase.auth().signOut().then(function() {
+        window.location.replace("login.html");
+      });
+    });
   </script>
-</head>
+    <script>
+    // Redirect to login if not authenticated
+    document.addEventListener('DOMContentLoaded', function() {
+      firebase.auth().onAuthStateChanged(function(user) {
+        if (!user) window.location.href = "login.html";
+      });
+    });
+  </script>
+  <style>
+        body::before {
+  content: "";
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  z-index: -1;
+  background: url('img/bg-hero.jpg') center center/cover no-repeat;
+  filter: blur(8px) brightness(0.92);
+  opacity: 0.85;
+  pointer-events: none;
+}
+  </style>
+  </head>
 <body>
   <!-- Header -->
-  <header>
-    <div class="container">
-      <h1>TastyBites Restaurant</h1>
-      <nav>
-        <a href="index.html">Home</a>
-                  <a href="orders.html" class="active">Past Orders</a>
+   <!-- Navbar & Hero Start -->
+      <div class="container-xxl position-relative p-0">
+        <nav
+          class="navbar navbar-expand-lg navbar-dark bg-dark px-4 px-lg-5 py-3 py-lg-0"
+        >
+          <a href="" class="navbar-brand p-0">
+            <h1 class="text-primary m-0">
+              <i class="fa fa-utensils me-3"></i>Rasoi
+            </h1>
+            <!-- <img src="img/logo.png" alt="Logo"> -->
+          </a>
+          <button
+            class="navbar-toggler"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#navbarCollapse"
+          >
+            <span class="fa fa-bars"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <div class="navbar-nav ms-auto py-0 pe-4">
+              <a href="index.html" class="nav-item nav-link active">Home</a>
+              <a href="orders.html" class="nav-item nav-link">Past Orders</a>
 
-        <a href="cart.html" class="active">Cart (<span id="cart-count">0</span>)</a>
-                <a href="login.html" id="logout-btn">Logout</a>
+              <a href="cart.html" class="nav-item nav-link"
+                >Cart (<span id="cart-count">0</span>)</a
+              >
+            </div>
+            <a href="" class="btn btn-primary" id="logout-btn">Logout</a>
+          </div>
+        </nav>
 
-      </nav>
-    </div>
-  </header>
+        
+      </div>
 
   <!-- Cart Section -->
+   <br>
+   <br>
+   <br>
   <section class="cart">
     <div class="container">
       <h2>Your Cart</h2>
@@ -83,7 +181,7 @@
 <!-- Payment Modal/Section -->
 <section id="payment-section" class="payment-section" style="display: none;">
   <div class="container">
-    <h1>Complete Your Payment</h1>
+<h1 style="text-align: center;">Complete Your Payment</h1>
     <div id="payment-summary" class="bill-receipt"></div>
     <div class="payment-method-selection">
       <h3>Select Payment Method</h3>
@@ -100,7 +198,7 @@
       <div class="payment-qr">
         <h3>Scan & Pay</h3>
         <img id="qr-code" src="" alt="QR Code" style="margin-bottom: 10px;">
-        <p><strong>UPI ID:</strong> tastybites@bank</p>
+        <p><strong>UPI ID:</strong> Rasoi@bank</p>
       </div>
       <div class="payment-card" style="display: none;">
         <h3>Pay with Card</h3>
@@ -123,7 +221,12 @@
   border-radius: 12px;
   box-shadow: 0 2px 12px rgba(0,0,0,0.08);
   padding: 32px 0;
-  margin-top: 32px;
+    margin-left: 30% ;
+
+      margin-right: 30% ;
+  margin-bottom: 10% ;
+
+
 }
 .payment-methods {
   display: flex;
@@ -153,7 +256,7 @@
 }
 </style>
 
-  <script src="script.js"></script>
+    <script src="js/script.js"></script>
   <script>
     // Redirect to login if not authenticated
     document.addEventListener('DOMContentLoaded', function() {

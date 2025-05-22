@@ -1,0 +1,395 @@
+/* Chat Button */
+.chat-btn {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  background: linear-gradient(135deg, #ff6b6b, #ff8e53);
+  border: none;
+  border-radius: 50%;
+  width: 70px;
+  height: 70px;
+  font-size: 28px;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  transition: transform 0.3s ease, background 0.3s ease, box-shadow 0.3s ease;
+  animation: bounce 1.5s infinite ease-in-out;
+}
+
+.chat-btn:hover {
+  background: linear-gradient(135deg, #ff8e53, #ff6b6b);
+  transform: scale(1.1);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+}
+
+/* Bounce animation for chat button */
+@keyframes bounce {
+  0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+  40% { transform: translateY(-10px); }
+  60% { transform: translateY(-5px); }
+}
+
+/* Animated Chat Button with Pop-out Image and Zoom Animation */
+.chat-btn-img {
+  position: fixed;
+  bottom: 36px;
+  right: 36px;
+  background: rgba(255,255,255,0.98);
+  border: none;
+  padding: 0;
+  width: 130px;
+  height: 160px;
+  border-radius: 32px;
+  z-index: 1100;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  box-shadow: 0 10px 40px rgba(255, 107, 107, 0.22), 0 4px 16px rgba(0,0,0,0.13);
+  overflow: visible;
+  transition: transform 0.18s, box-shadow 0.18s;
+  animation: chatBtnZoom 1.6s infinite alternate cubic-bezier(.4,0,.2,1);
+}
+
+@keyframes chatBtnZoom {
+  0% { transform: scale(1);}
+  60% { transform: scale(1.06);}
+  100% { transform: scale(1.12);}
+}
+
+.chat-btn-img img {
+  width: 130px;
+  height: 130px;
+  object-fit: contain; /* Show full image, keep transparency */
+  margin-top: -33px; /* About 30% of image pops out above the button */
+  /* No border-radius, no border, no background */
+  transition: transform 0.18s;
+  background: none;
+}
+
+.chat-btn-img:hover {
+  transform: scale(1.13) translateY(-6px);}
+
+.chat-btn-img:hover img {
+  transform: scale(1.12);
+}
+
+.chat-btn-text {
+  display: block;
+  font-size: 20px;
+  font-weight: 800;
+  border-radius: 14px;
+  text-align: center;
+  transition: background 0.2s, color 0.2s;
+}
+
+/* Pulse Glow Animation */
+@keyframes pulseGlow {
+  0% {
+    box-shadow: 0 0 0 0 rgba(255, 142, 83, 0.22), 0 8px 32px rgba(255, 107, 107, 0.18);
+  }
+  100% {
+    box-shadow: 0 0 48px 24px rgba(255, 142, 83, 0.13), 0 8px 32px rgba(255, 107, 107, 0.22);
+  }
+}
+
+/* Chatbot Modal */
+.chatbot {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 400px;
+  height: 100%;
+  background: linear-gradient(to bottom, #ffffff, #f8fafc);
+  box-shadow: -4px 0 15px rgba(0, 0, 0, 0.15);
+  display: none;
+  flex-direction: column;
+  z-index: 2000;
+  transform: scale(0);
+  transform-origin: bottom right;
+  transition: transform 0.4s ease-in-out;
+}
+
+.chatbot.open {
+  transform: scale(1);
+}
+
+/* Chatbot Header */
+.chatbot-header {
+  background: linear-gradient(90deg, #ff6b6b, #ff8e53);
+  color: white;
+  padding: 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.chatbot-header h3 {
+  margin: 0;
+  font-size: 20px;
+  font-family:fantasy;
+  color: #ffffff;
+}
+
+#chatbot-close {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 22px;
+  cursor: pointer;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+#chatbot-close:hover {
+  transform: scale(1.2);
+  opacity: 0.8;
+}
+
+/* Chatbot Messages */
+.chatbot-messages {
+  padding: 20px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  background: #f8fafc;
+}
+
+/* Chatbot Message Styles (No Animation) */
+.chatbot-message {
+  max-width: 80%;
+  padding: 12px 16px;
+  border-radius: 12px;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.chatbot-message.bot {
+  align-self: flex-start;
+  border-bottom-left-radius: 2px;
+}
+
+.chatbot-message.user {
+  background: linear-gradient(135deg, #ff6b6b, #ff8e53);
+  color: white;
+  align-self: flex-end;
+  border-bottom-right-radius: 2px;
+}
+
+/* New Styles for Message Row and Avatar */
+.chatbot-message-row {
+  display: flex;
+  align-items: flex-end;
+}
+
+.waiter-avatar {
+  width: 32px;
+  margin-right: 8px;
+}
+
+.chatbot-bubble {
+  background: #f1f1f1;
+  border-radius: 16px;
+  padding: 8px 14px;
+  display: inline-block;
+  max-width: 80%;
+}
+
+/* Chatbot Options */
+.chatbot-options {
+  padding: 20px;
+  border-top: 1px solid #e2e8f0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  background: #ffffff;
+}
+
+.chatbot-option {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 14px 16px;
+  background: linear-gradient(135deg, #ff6b6b, #ff8e53);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: transform 0.2s ease, background 0.3s ease, box-shadow 0.2s ease;
+  font-size: 15px;
+  font-weight: 500;
+  text-align: left;
+  gap: 12px;
+}
+
+.chatbot-option:hover {
+  background: linear-gradient(135deg, #ff8e53, #ff6b6b);
+  transform: scale(1.05);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.chatbot-option i {
+  font-size: 18px;
+  width: 24px;
+  text-align: center;
+}
+
+.chatbot-option img {
+  width: 50px;
+  height: 50px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-right: 12px;
+  transition: transform 0.2s ease;
+}
+
+.chatbot-option:hover img {
+  transform: rotate(5deg);
+}
+
+/* Servings Counter */
+.servings-counter {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.servings-counter button {
+  background: linear-gradient(135deg, #ff6b6b, #ff8e53);
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: transform 0.2s ease;
+}
+
+.servings-counter button:hover {
+  transform: scale(1.1);
+}
+
+.servings-counter span {
+  font-size: 16px;
+  min-width: 40px;
+  text-align: center;
+  color: #2d3748;
+}
+
+.servings-counter .enter-btn {
+  padding: 10px 20px;
+  font-size: 14px;
+}
+
+/* Chatbot Cart Cards */
+.chatbot-cart-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin: 12px 0;
+}
+
+.chatbot-cart-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #ffffff;
+  border-radius: 10px;
+  padding: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  opacity: 0;
+  transform: rotate(-2deg);
+  animation: fadeRotateIn 0.4s ease forwards;
+}
+
+@keyframes fadeRotateIn {
+  to {
+    opacity: 1;
+    transform: rotate(0);
+  }
+}
+
+.chatbot-cart-card:hover {
+  transform: scale(1.02);
+}
+
+.chatbot-cart-card img {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 8px;
+  background: #f8fafc;
+}
+
+
+/* Responsive Design */
+@media (max-width: 767px) {
+  .chatbot {
+    width: 100%;
+    bottom: 0;
+    top: auto;
+    height: 100%;
+  }
+
+  .chatbot-message {
+    max-width: 90%;
+  }
+
+  .chatbot-option {
+    padding: 12px 14px;
+    font-size: 14px;
+  }
+
+  .chatbot-option i {
+    font-size: 16px;
+    width: 20px;
+  }
+
+  .chatbot-option img {
+    width: 40px;
+    height: 40px;
+  }
+
+  .servings-counter button {
+    padding: 6px 10px;
+    font-size: 14px;
+  }
+
+  .servings-counter span {
+    font-size: 14px;
+  }
+
+  .servings-counter .enter-btn {
+    padding: 8px 15px;
+    font-size: 12px;
+  }
+
+  /* Adjustments for modern chat button with image and text */
+  .chat-btn-img {
+    width: 90px;
+    height: 110px;
+    bottom: 14px;
+    right: 14px;
+    border-radius: 18px;
+  }
+  .chat-btn-img img {
+    width: 70px;
+    height: 70px;
+    margin-top: -18px;
+    margin-bottom: 4px;
+  }
+
+  .chat-btn-text {
+  display: block;
+  font-size: 13px;
+  font-weight: 800;
+  border-radius: 14px;
+  text-align: center;
+  letter-spacing: 0.7px;
+  transition: background 0.2s, color 0.2s;
+}
+
+
+}

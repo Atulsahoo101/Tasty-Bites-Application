@@ -1,92 +1,96 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Past Orders - TastyBites</title>
-  <link rel="stylesheet" href="styles.css">
-  
-  <!-- Firebase SDKs -->
-  <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore-compat.js"></script>
-  
-  <script>
-    // Firebase config
-     const firebaseConfig = {
+    <meta charset="utf-8" />
+    <title>Rasoi - Past Orders</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore-compat.js"></script>
+    <script>
+      const firebaseConfig = {
         apiKey: "AIzaSyCY4qhi8Vutg_0pFC7msLfKMRZiNELn2hE",
-  authDomain: "foodapp-8ffc6.firebaseapp.com",
-  projectId: "foodapp-8ffc6",
-  storageBucket: "foodapp-8ffc6.firebasestorage.app",
-  messagingSenderId: "314611367873",
-  appId: "1:314611367873:web:10582db204db9a1e67b940",
-  measurementId: "G-EDXCJLRJXC"
-    };
-
-    // Initialize Firebase
-    firebase.initializeApp(firebaseConfig);
-    const auth = firebase.auth();
-    const db = firebase.firestore();
-  </script>
-
-  <style>
-    .food-card {
-      border: 1px solid #e0e0e0;
-      border-radius: 10px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.07);
-      padding: 24px 20px 16px 20px;
-      margin-bottom: 28px;
-      background: #fff;
-      transition: box-shadow 0.2s;
-    }
-    .food-card:hover {
-      box-shadow: 0 4px 16px rgba(0,0,0,0.13);
-    }
-    .food-card h3 {
-      margin-top: 0;
-      color: #4285F4;
-      font-size: 1.2em;
-      margin-bottom: 10px;
-    }
-    .food-card ul {
-      padding-left: 18px;
-      margin-bottom: 10px;
-    }
-    .food-card li {
-      margin-bottom: 4px;
-      font-size: 1em;
-    }
-    .food-card .price {
-      font-weight: bold;
-      color: #388e3c;
-      margin-bottom: 6px;
-    }
-    .food-card strong {
-      color: #333;
-    }
-  </style>
+        authDomain: "foodapp-8ffc6.firebaseapp.com",
+        projectId: "foodapp-8ffc6",
+        storageBucket: "foodapp-8ffc6.firebasestorage.app",
+        messagingSenderId: "314611367873",
+        appId: "1:314611367873:web:10582db204db9a1e67b940",
+        measurementId: "G-EDXCJLRJXC",
+      };
+      firebase.initializeApp(firebaseConfig);
+      const auth = firebase.auth();
+      const db = firebase.firestore();
+    </script>
+    <link href="css/bootstrap.min.css" rel="stylesheet" />
+    <link href="css/style.css" rel="stylesheet" />
+    <style>
+      body::before {
+        content: "";
+        position: fixed;
+        top: 0; left: 0; right: 0; bottom: 0;
+        z-index: -1;
+        background: url('img/bg-hero.jpg') center center/cover no-repeat;
+        filter: blur(8px) brightness(0.92);
+        opacity: 0.85;
+        pointer-events: none;
+      }
+      .food-card {
+        border: 1px solid #e0e0e0;
+        border-radius: 10px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+        padding: 24px 20px 16px 20px;
+        margin-bottom: 28px;
+        background: #fff;
+        transition: box-shadow 0.2s;
+      }
+      .food-card:hover {
+        box-shadow: 0 4px 16px rgba(0,0,0,0.13);
+      }
+      .food-card h3 {
+        margin-top: 0;
+        color: #4285F4;
+        font-size: 1.2em;
+        margin-bottom: 10px;
+      }
+      .table {
+        margin-bottom: 0;
+      }
+    </style>
 </head>
 <body>
-  <header>
-    <div class="container">
-      <h1>TastyBites Restaurant</h1>
-      <nav>
-        <a href="index.html" class="active">Home</a>
-        <a href="orders.html" class="active">Past Orders</a>
-        <a href="cart.html">Cart (<span id="cart-count">0</span>)</a>
-        <a href="login.html" id="logout-btn">Logout</a>
-      </nav>
-    </div>
-  </header>
-
+  <div class="container-xxl position-relative p-0">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark px-4 px-lg-5 py-3 py-lg-0">
+      <a href="#" class="navbar-brand p-0">
+        <h1 class="text-primary m-0"><i class="fa fa-utensils me-3"></i>Rasoi</h1>
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
+        <span class="fa fa-bars"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarCollapse">
+        <div class="navbar-nav ms-auto py-0 pe-4">
+          <a href="index.html" class="nav-item nav-link active">Home</a>
+          <a href="orders.html" class="nav-item nav-link">Past Orders</a>
+          <a href="cart.html" class="nav-item nav-link">Cart (<span id="cart-count">0</span>)</a>
+        </div>
+        <a href="#" class="btn btn-primary" id="logout-btn">Logout</a>
+      </div>
+    </nav>
+  </div>
   <section class="all-items">
     <div class="container">
       <h2>Your Past Orders</h2>
-      <div id="orders-list"></div>
+      <div id="orders-list" class="row"></div>
     </div>
   </section>
 
   <script>
-    // Check auth state
+    document.getElementById('logout-btn').addEventListener('click', function(e) {
+      e.preventDefault();
+      firebase.auth().signOut().then(function() {
+        window.location.replace("login.html");
+      });
+    });
+
     auth.onAuthStateChanged(user => {
       const ordersList = document.getElementById('orders-list');
 
@@ -108,13 +112,30 @@
           snapshot.forEach(doc => {
             const order = doc.data();
             html += `
-              <div class="food-card">
-                <h3>Order on ${order.timestamp?.toDate().toLocaleString() || 'Unknown date'}</h3>
-                <ul>
-                  ${order.items.map(i => `<li><strong>${i.name}</strong> &times; ${i.quantity} <span style="float:right;">₹${i.price * i.quantity}</span></li>`).join('')}
-                </ul>
-                <p class="price">Total: ₹${order.total}</p>
-                <p><strong>Delivered to:</strong> ${order.address}</p>
+              <div class="col-md-6 col-lg-4">
+                <div class="food-card">
+                  <h3>Order on ${order.timestamp?.toDate().toLocaleString() || 'Unknown date'}</h3>
+                  <table class="table">
+                    <thead>
+                      <tr>
+                        <th>Title</th>
+                        <th>Count</th>
+                        <th>Price</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      ${order.items.map(i => `
+                        <tr>
+                          <td>${i.name}</td>
+                          <td>${i.quantity}</td>
+                          <td>₹${i.price * i.quantity}</td>
+                        </tr>
+                      `).join('')}
+                    </tbody>
+                  </table>
+                  <p class="price">Total: ₹${order.total}</p>
+                  <p><strong>Delivered to:</strong> ${order.address}</p>
+                </div>
               </div>
             `;
           });
@@ -126,5 +147,6 @@
         });
     });
   </script>
+  <script src="js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
