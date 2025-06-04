@@ -223,7 +223,7 @@ window.renderChatbot = function() {
   const getFriendlyGreeting = () => {
     const greetings = [
       'Hey there! Excited to help you explore our Odia delicacies! 😋',
-      'Welcome back to Rasoi! Ready for some delicious picks? 🍽️',
+      'Welcome back to Dinewise! Ready for some delicious picks? 🍽️',
       'Namaste! Let’s make your meal special today! 😊'
     ];
     return greetings[Math.floor(Math.random() * greetings.length)];
@@ -244,7 +244,7 @@ window.renderChatbot = function() {
       addOption('Share my preferences', () => { window.chatState.step = 'choose_diet'; }, null, getIconClass('Share my preferences', 'welcome'), true);
       addOption('Show me the menu', () => { window.chatState.step = 'choose_category'; }, null, getIconClass('Show me the menu', 'welcome'));
       addOption('Check my cart', () => { window.chatState.step = 'view_cart'; }, null, getIconClass('Check my cart', 'welcome'));
-      addOption('See past orders', () => { window.chatState.step = 'view_past_orders'; }, null, getIconClass('See past orders', 'welcome'));
+      addOption('See Orders', () => { window.chatState.step = 'view_past_orders'; }, null, getIconClass('See Orders', 'welcome'));
       addOption('I need help', () => { window.chatState.step = 'help'; }, null, getIconClass('I need help', 'welcome'));
       break;
 
@@ -413,7 +413,7 @@ window.renderChatbot = function() {
         addMessage('Your cart’s looking a bit empty. Shall we add some tasty Odia dishes, like our Podo Pitha? 😋');
         addOption('Browse menu', () => { window.chatState.step = 'choose_category'; }, null, getIconClass('Browse menu', 'view_cart'));
         addOption('Change preferences', () => { window.chatState.step = 'choose_diet'; }, null, getIconClass('Change preferences', 'view_cart'));
-        addOption('See past orders', () => { window.chatState.step = 'view_past_orders'; }, null, getIconClass('See past orders', 'view_cart'));
+        addOption('See Orders', () => { window.chatState.step = 'view_past_orders'; }, null, getIconClass('See Orders', 'view_cart'));
         addOption('Back', () => { window.chatState.step = 'welcome'; }, null, getIconClass('Back', 'view_cart'));
       } else {
         if (!window.menuItems || window.menuItems.length === 0) {
@@ -468,17 +468,17 @@ window.renderChatbot = function() {
           addOption('Proceed to checkout', () => { window.location.href = 'cart.html'; }, null, getIconClass('Proceed to checkout', 'view_cart'));
           addOption('Add more dishes', () => { window.chatState.step = 'choose_category'; }, null, getIconClass('Add more dishes', 'view_cart'));
           addOption('Change preferences', () => { window.chatState.step = 'choose_diet'; }, null, getIconClass('Change preferences', 'view_cart'));
-          addOption('See past orders', () => { window.chatState.step = 'view_past_orders'; }, null, getIconClass('See past orders', 'view_cart'));
+          addOption('See Orders', () => { window.chatState.step = 'view_past_orders'; }, null, getIconClass('See Orders', 'view_cart'));
           addOption('Back', () => { window.chatState.step = 'welcome'; }, null, getIconClass('Back', 'view_cart'));
         }
       }
       break;
 
     case 'view_past_orders':
-      addMessage('Let me check your past orders for you...');
+      addMessage('Let me check your Orders for you...');
       const user = firebase.auth().currentUser;
       if (!user) {
-        addMessage('You’ll need to log in to see your past orders. Want to explore the menu instead?');
+        addMessage('You’ll need to log in to see your Orders. Want to explore the menu instead?');
         addOption('Browse menu', () => { window.chatState.step = 'choose_category'; }, null, getIconClass('Browse menu', 'view_past_orders'));
         addOption('Back', () => { window.chatState.step = 'welcome'; }, null, getIconClass('Back', 'view_past_orders'));
       } else {
@@ -488,7 +488,7 @@ window.renderChatbot = function() {
           .get()
           .then(snapshot => {
             if (snapshot.empty) {
-              addMessage('No past orders yet. How about starting a new one with something sweet like Podo Pitha? 😊');
+              addMessage('No Orders yet. How about starting a new one with something sweet like Podo Pitha? 😊');
               addOption('Browse menu', () => { window.chatState.step = 'choose_category'; }, null, getIconClass('Browse menu', 'view_past_orders'));
               addOption('Back', () => { window.chatState.step = 'welcome'; }, null, getIconClass('Back', 'view_past_orders'));
             } else {
@@ -510,8 +510,8 @@ window.renderChatbot = function() {
             window.renderChatbot();
           })
           .catch(error => {
-            console.error('Error fetching past orders:', error);
-            addMessage('Sorry, I couldn’t load your past orders. Try again or browse the menu?');
+            console.error('Error fetching Orders:', error);
+            addMessage('Sorry, I couldn’t load your Orders. Try again or browse the menu?');
             addOption('Browse menu', () => { window.chatState.step = 'choose_category'; }, null, getIconClass('Browse menu', 'view_past_orders'));
             addOption('Back', () => { window.chatState.step = 'welcome'; }, null, getIconClass('Back', 'view_past_orders'));
             window.renderChatbot();
@@ -520,10 +520,10 @@ window.renderChatbot = function() {
       break;
 
     case 'help':
-      addMessage('Happy to assist! You can browse our menu, check your cart, see past orders, or call us at +91-123-456-7890 if you need more help.');
+      addMessage('Happy to assist! You can browse our menu, check your cart, see Orders, or call us at +91-123-456-7890 if you need more help.');
       addOption('Browse menu', () => { window.chatState.step = 'choose_category'; }, null, getIconClass('Browse menu', 'help'));
       addOption('Check cart', () => { window.chatState.step = 'view_cart'; }, null, getIconClass('Check cart', 'help'));
-      addOption('See past orders', () => { window.chatState.step = 'view_past_orders'; }, null, getIconClass('See past orders', 'help'));
+      addOption('See Orders', () => { window.chatState.step = 'view_past_orders'; }, null, getIconClass('See Orders', 'help'));
       addOption('Change preferences', () => { window.chatState.step = 'choose_diet'; }, null, getIconClass('Change preferences', 'help'));
       addOption('Back', () => { window.chatState.step = 'welcome'; }, null, getIconClass('Back', 'help'));
       break;

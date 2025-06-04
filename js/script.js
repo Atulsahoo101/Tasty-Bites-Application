@@ -1,5 +1,3 @@
-
-
 // Cart state (load from localStorage or initialize empty)
 let cart = JSON.parse(localStorage.getItem('cart')) || [];
 let menuItems = [];
@@ -9,20 +7,33 @@ if (!window.chatState) {
     messageHistory: []
   };
 }
+
 // Fetch menu items from Firestore
 async function fetchMenuItems() {
   try {
     const menuCollection = firebase.firestore().collection('menu');
     const snapshot = await menuCollection.get();
     window.menuItems = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    
     if (!Array.isArray(window.menuItems)) {
       throw new Error('Invalid menu data: Expected an array');
     }
+    
+    console.log('Menu items loaded:', window.menuItems.length, 'items');
+    
     if (window.location.pathname.includes('index.html') || window.location.pathname === '/') {
       displayRecommendations(window.menuItems);
+
+      displayRecommendationss(window.menuItems);
       displayCategoryFilter(window.menuItems);
       displayAllItems(window.menuItems);
-      window.initializeChatbot(); // Ensure this runs after menuItems is populated
+      
+      // Render carousels immediately after menu items are loaded
+      renderCarousels();
+      
+      if (window.initializeChatbot) {
+        window.initializeChatbot();
+      }
     }
     updateCartCount();
   } catch (error) {
@@ -32,40 +43,142 @@ async function fetchMenuItems() {
       container.innerHTML = `<p style="color: red; text-align: center;">Failed to load menu. Please try again later.</p>`;
     }
     // Display error in chatbot if open
-    if (window.chatState && document.getElementById('chatbot').style.display === 'flex') {
+    if (window.chatState && document.getElementById('chatbot') && document.getElementById('chatbot').style.display === 'flex') {
       window.chatState.messageHistory.push({
         text: 'Failed to load menu items. Please try again later.',
         type: 'bot'
       });
-      window.renderChatbot();
+      if (window.renderChatbot) {
+        window.renderChatbot();
+      }
     }
   }
 }
 
+// Function to get random items from menu
+function getRandomItems(items, count) {
+  const shuffled = [...items].sort(() => 0.5 - Math.random());
+  return shuffled.slice(0, Math.min(count, items.length));
+}
+
+// Function to render carousels
+function renderCarousels() {
+  if (!window.menuItems || window.menuItems.length === 0) {
+    console.log('No menu items available for carousels');
+    return;
+  }
+
+  // Get 10 random items for each section
+  const itemCount = 10;
+  const todaysSpecial = getRandomItems(window.menuItems, itemCount);
+
+  // For "Most Ordered Food", sort by orderedCount if available, else random
+  let mostOrdered = [];
+  if (window.menuItems[0] && typeof window.menuItems[0].orderedCount !== "undefined") {
+    mostOrdered = [...window.menuItems]
+      .sort((a, b) => (b.orderedCount || 0) - (a.orderedCount || 0))
+      .slice(0, itemCount);
+  } else {
+    mostOrdered = getRandomItems(window.menuItems, itemCount);
+  }
+
+  // Render Today's Special
+  const specialCarousel = document.getElementById("todays-special-carousel");
+  if (specialCarousel) {
+    specialCarousel.innerHTML = todaysSpecial.map(item => `
+      <div class="food-card">
+        <img src="${item.imageUrl || 'https://via.placeholder.com/200'}" alt="${item.name}" onerror="this.src='https://via.placeholder.com/200'">
+        <h3>${item.name}</h3>
+        <p>${item.description || 'Delicious food item'}</p>
+        <p class="price">₹${Number(item.price).toFixed(0)}</p>
+        <button onclick="addToCart('${item.id}', '${item.name}', ${Number(item.price)})">Add to Cart</button>
+      </div>
+    `).join('');
+  } else {
+    console.error('todays-special-carousel element not found');
+  }
+
+  // Render Most Ordered
+  const orderedCarousel = document.getElementById("most-ordered-carousel");
+  if (orderedCarousel) {
+    orderedCarousel.innerHTML = mostOrdered.map(item => `
+      <div class="food-card">
+        <img src="${item.imageUrl || 'https://via.placeholder.com/200'}" alt="${item.name}" onerror="this.src='https://via.placeholder.com/200'">
+        <h3>${item.name}</h3>
+        <p>${item.description || 'Delicious food item'}</p>
+        <p class="price">₹${Number(item.price).toFixed(0)}</p>
+        <button onclick="addToCart('${item.id}', '${item.name}', ${Number(item.price)})">Add to Cart</button>
+      </div>
+    `).join('');
+  } else {
+    console.error('most-ordered-carousel element not found');
+  }
+
+  // Initialize Owl Carousel after content is added
+  setTimeout(() => {
+    if (typeof $ !== 'undefined' && $.fn.owlCarousel) {
+      $('.special-carousel').trigger('destroy.owl.carousel').removeClass('owl-carousel owl-loaded');
+      $('.special-carousel').find('.owl-stage-outer').children().unwrap();
+      $('.special-carousel').owlCarousel({
+        loop: true,
+        margin: 20,
+        nav: true,
+        dots: true,
+        autoplay: true,
+        autoplayTimeout: 3500,
+        responsive: {
+          0: { items: 1 },
+          600: { items: 2 },
+          1000: { items: 3 }
+        }
+      });
+    }
+  }, 100);
+}
+
 // Display recommendations (random 3 items)
 function displayRecommendations(items) {
-  const recommendations = items.sort(() => 0.5 - Math.random()).slice(0, 3);
-  const container = document.getElementById('recommendations');
-  if (!container) return;
-  container.innerHTML = '';
-  recommendations.forEach(item => {
-    if (item.id && item.name && item.price && item.description && item.imageUrl) {
+  // Get 10 random items
+  const randomTen = [...items].sort(() => 0.5 - Math.random()).slice(0, 10);
+  const rec1 = document.getElementById("recommendations1");
+  if (rec1) {
+    rec1.innerHTML = randomTen.map(item => `
+      <div class="food-card" style="min-width:250px;max-width:250px;">
+        <img src="${item.imageUrl || 'https://via.placeholder.com/200'}" alt="${item.name}" onerror="this.src='https://via.placeholder.com/200'">
+        <h3>${item.name}</h3>
+        <p>${item.description || 'Delicious food item'}</p>
+        <p class="price">₹${Number(item.price).toFixed(0)}</p>
+        <button onclick="addToCart('${item.id}', '${item.name}', ${Number(item.price)})">Add to Cart</button>
+      </div>
+    `).join('');
+  }
+}
+
+function displayRecommendationss(items) {
+  const ids = ['recommendations2'];
+  ids.forEach(id => {
+    const container = document.getElementById(id);
+    if (!container) return;
+    container.innerHTML = '';
+    items.slice(3, 10).forEach(item => {
       container.innerHTML += `
         <div class="food-card">
-          <img src="${item.imageUrl}" alt="${item.name}" onerror="this.src='https://via.placeholder.com/200'">
+          <img src="${item.imageUrl || 'https://via.placeholder.com/200'}" alt="${item.name}">
           <h3>${item.name}</h3>
-          <p>${item.description}</p>
+          <p>${item.description || 'Delicious food item'}</p>
           <p class="price">₹${Number(item.price).toFixed(0)}</p>
           <button onclick="addToCart('${item.id}', '${item.name}', ${Number(item.price)})">Add to Cart</button>
         </div>
       `;
-    }
+    });
   });
 }
 
+
+
 // Display category filter buttons
 function displayCategoryFilter(items) {
-  const categories = ['All', ...new Set(items.map(item => item.category))];
+  const categories = ['All', ...new Set(items.map(item => item.category).filter(cat => cat))];
   const container = document.getElementById('category-filter');
   if (!container) return;
   container.innerHTML = '';
@@ -86,7 +199,6 @@ function filterByCategory(category) {
   buttons.forEach(btn => {
     if (btn.textContent === category) btn.classList.add('active');
   });
-  // Use window.menuItems instead of menuItems
   const filteredItems = category === 'All' ? window.menuItems : window.menuItems.filter(item => item.category === category);
   displayAllItems(filteredItems);
 }
@@ -101,12 +213,12 @@ function displayAllItems(items) {
     return;
   }
   items.forEach(item => {
-    if (item.id && item.name && item.price && item.description && item.imageUrl) {
+    if (item.id && item.name && item.price) {
       container.innerHTML += `
         <div class="food-card">
-          <img src="${item.imageUrl}" alt="${item.name}" onerror="this.src='https://via.placeholder.com/200'">
+          <img src="${item.imageUrl || 'https://via.placeholder.com/200'}" alt="${item.name}" onerror="this.src='https://via.placeholder.com/200'">
           <h3>${item.name}</h3>
-          <p>${item.description}</p>
+          <p>${item.description || 'Delicious food item'}</p>
           <p class="price">₹${Number(item.price).toFixed(0)}</p>
           <button onclick="addToCart('${item.id}', '${item.name}', ${Number(item.price)})">Add to Cart</button>
         </div>
@@ -152,7 +264,7 @@ function updateQuantity(id, change) {
 function saveCart() {
   try {
     localStorage.setItem('cart', JSON.stringify(cart));
-    console.log('Cart saved to localStorage:', JSON.parse(localStorage.getItem('cart')));
+    console.log('Cart saved to localStorage');
   } catch (error) {
     console.error('Error saving cart to localStorage:', error);
   }
@@ -208,9 +320,9 @@ function displayCart() {
             <button onclick="updateQuantity('${item.id}', 1)">+</button>
           </div>
           <p>₹${itemTotal.toFixed(0)}</p>
-<button onclick="removeFromCart('${item.id}')" style="border: none; background: transparent; color: red; cursor: pointer;">
-  <i class="fa fa-trash"></i>
-</button>
+          <button onclick="removeFromCart('${item.id}')" style="border: none; background: transparent; color: red; cursor: pointer;">
+            <i class="fa fa-trash"></i>
+          </button>
         </div>
       `;
     } else {
@@ -270,7 +382,7 @@ async function handleOrderSubmission() {
   }
 
   const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-  const orderNumber = Math.floor(10000 + Math.random() * 90000); // Random 5-digit number
+  const orderNumber = Math.floor(10000 + Math.random() * 90000);
   const orderDate = new Date().toLocaleString('en-IN', {
     dateStyle: 'medium',
     timeStyle: 'short'
@@ -289,10 +401,9 @@ async function handleOrderSubmission() {
     timestamp: firebase.firestore.FieldValue.serverTimestamp()
   };
 
-  // Display payment summary in receipt format
   paymentSummary.innerHTML = `
     <div class="bill-header">
-      <h3>Rasoi</h3>
+      <h3>Dinewise</h3>
       <p>Order Number: #${orderNumber}</p>
       <p>Date: ${orderDate}</p>
     </div>
@@ -318,18 +429,14 @@ async function handleOrderSubmission() {
     </table>
     <div class="bill-footer">
       <p class="total">Grand Total: ₹${total.toFixed(0)}</p>
-      <p class="thank-you">Thank You for dining with Rasoi!</p>
+      <p class="thank-you">Thank You for dining with Dinewise!</p>
     </div>
   `;
 
-  // Set dynamic QR code with UPI link
-  const upiLink = `upi://pay?pa=Rasoi@bank&pn=Rasoi&am=${total.toFixed(0)}&cu=INR`;
+  const upiLink = `upi://pay?pa=Dinewise@bank&pn=Dinewise&am=${total.toFixed(0)}&cu=INR`;
   qrCode.src = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(upiLink)}`;
 
-  // Initialize payment method display
   updatePaymentMethodDisplay();
-
-  // Show payment section
   checkoutForm.style.display = 'none';
   paymentSection.style.display = 'block';
 }
@@ -341,12 +448,12 @@ function updatePaymentMethodDisplay() {
   const cardError = document.getElementById('card-error');
 
   if (window.chatState.paymentMethod === 'upi') {
-    paymentQr.style.display = 'block';
-    paymentCard.style.display = 'none';
-    cardError.style.display = 'none';
+    if (paymentQr) paymentQr.style.display = 'block';
+    if (paymentCard) paymentCard.style.display = 'none';
+    if (cardError) cardError.style.display = 'none';
   } else {
-    paymentQr.style.display = 'none';
-    paymentCard.style.display = 'block';
+    if (paymentQr) paymentQr.style.display = 'none';
+    if (paymentCard) paymentCard.style.display = 'block';
   }
 }
 
@@ -357,14 +464,12 @@ function validateCardInputs() {
   const cardCvv = document.getElementById('card-cvv').value;
   const cardError = document.getElementById('card-error');
 
-  // Card Number: 16 digits
   if (!/^\d{16}$/.test(cardNumber)) {
     cardError.textContent = 'Invalid card number. Must be 16 digits.';
     cardError.style.display = 'block';
     return false;
   }
 
-  // Expiry: MM/YY, MM 01-12, YY >= current year
   if (!/^(0[1-9]|1[0-2])\/\d{2}$/.test(cardExpiry)) {
     cardError.textContent = 'Invalid expiry date. Use MM/YY format (e.g., 12/25).';
     cardError.style.display = 'block';
@@ -379,7 +484,6 @@ function validateCardInputs() {
     return false;
   }
 
-  // CVV: 3 digits
   if (!/^\d{3}$/.test(cardCvv)) {
     cardError.textContent = 'Invalid CVV. Must be 3 digits.';
     cardError.style.display = 'block';
@@ -413,14 +517,15 @@ async function handlePaymentSuccess() {
 
   try {
     await firebase.firestore().collection('orders').add(window.chatState.orderData);
-    confirmationMessage.innerHTML = `
-      Thank you, ${window.chatState.orderData.name}! Your order #${window.chatState.orderData.orderNumber} of ₹${window.chatState.orderData.total.toFixed(0)} will be delivered to ${window.chatState.orderData.address}.<br>
-      We'll contact you at ${window.chatState.orderData.phone} for confirmation.
-    `;
-    paymentSection.style.display = 'none';
-    orderConfirmation.style.display = 'block';
 
-    // Clear cart after order
+    // Navigate to a confirmation page instead of showing the message
+    window.location.href = "orders.html";
+
+    // If you want to pass order info, you can use sessionStorage or query params
+    // Example:
+    // sessionStorage.setItem('lastOrder', JSON.stringify(window.chatState.orderData));
+    // window.location.href = "order-success.html";
+    
     cart = [];
     saveCart();
     updateCartCount();
@@ -440,6 +545,15 @@ function handlePaymentCancel() {
   } else {
     console.error('Payment or checkout elements not found.');
   }
+}
+
+// Simple scroll function for carousel arrows
+function scrollCarousel(id, direction) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  const card = el.querySelector('.food-card');
+  const scrollAmount = card ? card.offsetWidth + 20 : 250;
+  el.scrollBy({ left: direction * scrollAmount, behavior: 'smooth' });
 }
 
 // Initialize
@@ -471,13 +585,9 @@ function initialize() {
 
     if (checkoutBtn) {
       checkoutBtn.addEventListener('click', handleCheckout);
-    } else {
-      console.error('Checkout button not found.');
     }
     if (submitOrder) {
       submitOrder.addEventListener('click', handleOrderSubmission);
-    } else {
-      console.error('Submit order button not found.');
     }
     if (cancelCheckout) {
       cancelCheckout.addEventListener('click', () => {
@@ -488,18 +598,12 @@ function initialize() {
           cartSection.style.display = 'block';
         }
       });
-    } else {
-      console.error('Cancel checkout button not found.');
     }
     if (paymentSuccessBtn) {
       paymentSuccessBtn.addEventListener('click', handlePaymentSuccess);
-    } else {
-      console.error('Payment success button not found.');
     }
     if (cancelPaymentBtn) {
       cancelPaymentBtn.addEventListener('click', handlePaymentCancel);
-    } else {
-      console.error('Cancel payment button not found.');
     }
     if (paymentRadios) {
       paymentRadios.forEach(radio => {
@@ -508,14 +612,22 @@ function initialize() {
           updatePaymentMethodDisplay();
         });
       });
-    } else {
-      console.error('Payment radio buttons not found.');
     }
   }
+
+  // Start fetching menu items
   fetchMenuItems();
 }
 
+// DOMContentLoaded event listener
+document.addEventListener("DOMContentLoaded", function () {
+  console.log('DOM Content Loaded');
+  initialize();
+});
 
-
-
-initialize();
+// Fallback initialization
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initialize);
+} else {
+  initialize();
+}
