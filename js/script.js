@@ -54,6 +54,31 @@ async function fetchMenuItems() {
     }
   }
 }
+// In main.js
+function renderMenuItems(items) {
+  const allItemsDiv = document.getElementById('all-items');
+  if (!allItemsDiv) return;
+  allItemsDiv.innerHTML = '';
+  if (!items || items.length === 0) {
+    allItemsDiv.innerHTML = '<p>No items found.</p>';
+    return;
+  }
+  items.forEach(item => {
+    allItemsDiv.innerHTML += `
+      <div class="food-card">
+        <h3>${item.name}</h3>
+        <p>${item.description || ''}</p>
+        <p class="price">₹${item.price}</p>
+        <button onclick="addToCart('${item.id}', '${item.name}', ${item.price})">Add to Cart</button>
+      </div>
+    `;
+  });
+}
+// Example: After fetching menu items from Firestore
+db.collection('menu').get().then(snapshot => {
+  window.menuItems = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+  renderMenuItems(window.menuItems); // Initial render
+});
 
 // Function to get random items from menu
 function getRandomItems(items, count) {
@@ -228,12 +253,12 @@ function displayAllItems(items) {
 }
 
 // Add to cart
-function addToCart(id, name, price, quantity = 1) {
-  const existingItem = cart.find(item => item.id === id);
+function addToCart(id, name, price, quantity = 1, customization = null) {
+  const existingItem = cart.find(item => item.id === id && JSON.stringify(item.customization) === JSON.stringify(customization));
   if (existingItem) {
     existingItem.quantity += quantity;
   } else {
-    cart.push({ id, name, price: Number(price), quantity });
+    cart.push({ id, name, price: Number(price), quantity, customization });
   }
   saveCart();
   updateCartCount();
@@ -311,9 +336,58 @@ function displayCart() {
     if (item.id && item.name && item.price && item.quantity) {
       const itemTotal = item.price * item.quantity;
       total += itemTotal;
+
+      // Build customization text
+     let customizationText = '';
+
+// Check and render customization details
+if (item.customization && typeof item.customization === 'object' && Object.keys(item.customization).length > 0) {
+  const customizationDetails = Object.entries(item.customization)
+    .map(([key, value]) => `<span style="margin-right: 8px;"><strong>${key}</strong>: ${value}</span>`)
+    .join('');
+
+  customizationText += `
+    <div style="
+      background-color: #fff7ed;        /* light orange background */
+      border-left: 4px solid #fb923c;   /* orange border */
+      padding: 8px 12px;
+      border-radius: 6px;
+      font-size: 0.95em;
+      color: #78350f;                   /* dark orange text */
+      margin-bottom: 6px;
+      font-family: 'Segoe UI', sans-serif;
+    ">
+      <div style="font-weight: 600; margin-bottom: 4px;">🍽️ Note:</div>
+      ${customizationDetails}
+    </div>`;
+}
+
+// Check and render optional note
+if (item.note && item.note.trim() !== '') {
+  customizationText += `
+    <div style="
+      background-color: #f1f5f9;        /* light gray background */
+      border-left: 4px solid #94a3b8;   /* gray-blue border */
+      padding: 8px 12px;
+      border-radius: 6px;
+      font-size: 0.9em;
+      color: #334155;                   /* slate text */
+      margin-bottom: 6px;
+      font-family: 'Segoe UI', sans-serif;
+      font-style: italic;
+    ">
+      <div style="font-weight: 600; margin-bottom: 4px;">📝 Note</div>
+      ${item.note.trim()}
+    </div>`;
+}
+
+
       cartItems.innerHTML += `
         <div class="cart-item">
-          <p>${item.name} - ₹${Number(item.price).toFixed(0)}</p>
+          <p>
+            ${item.name} - ₹${Number(item.price).toFixed(0)}
+            ${customizationText}
+          </p>
           <div class="quantity">
             <button onclick="updateQuantity('${item.id}', -1)">-</button>
             <span>${item.quantity}</span>
@@ -616,7 +690,27 @@ function initialize() {
   }
 
   // Start fetching menu items
-  fetchMenuItems();
+  fetchMenuItems().then(() => {
+    // Attach search handler after menu is loaded
+    const searchInput = document.getElementById('menu-search');
+    if (searchInput) {
+      searchInput.addEventListener('input', function () {
+        // Activate the "All" tab visually
+        const allBtn = document.querySelector('.category-btn');
+        if (allBtn && allBtn.textContent.trim().toLowerCase() === 'all') {
+          document.querySelectorAll('.category-btn').forEach(btn => btn.classList.remove('active'));
+          allBtn.classList.add('active');
+        }
+
+        const query = searchInput.value.trim().toLowerCase();
+        const filtered = (window.menuItems || []).filter(item =>
+          item.name.toLowerCase().includes(query) ||
+          (item.description && item.description.toLowerCase().includes(query))
+        );
+        displayAllItems(filtered);
+      });
+    }
+  });
 }
 
 // DOMContentLoaded event listener
@@ -624,10 +718,3 @@ document.addEventListener("DOMContentLoaded", function () {
   console.log('DOM Content Loaded');
   initialize();
 });
-
-// Fallback initialization
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', initialize);
-} else {
-  initialize();
-}
